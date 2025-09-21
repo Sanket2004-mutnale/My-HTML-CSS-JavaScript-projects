@@ -1,0 +1,52 @@
+body{
+    background-color:#001e4d;
+}
+.App{
+    background-color: white;
+    width: 360px;
+    height: 400px;
+    margin-left: 480px;
+    margin-top: 80px;
+}
+.App h1{
+    text-align: center;
+    text-shadow: 1px 1px 1px;
+    color: #001e4d;
+}
+.App h2{
+    margin-left: 5px;
+    color: #4487f4;
+}
+.butt{
+    text-align: left;
+    width: 330px;
+    height: 30px;
+    margin-left: 10px;
+    background: white;
+    border: 1px solid black;
+    color: #222;
+    cursor: pointer;
+    margin-top: 10px;
+
+}
+#Next-butt{
+    margin-left: 135px;
+    margin-top: 30px;
+    width: 80px;
+    height: 27px;
+    background: #174286;
+    border: 1px solid black;
+    cursor: pointer;
+}
+.butt:hover:not([disabled]){
+    background: #214a8d;
+}
+.butt:disabled{
+    cursor: no-drop;
+}
+.correct{
+    background: palegreen;
+}
+.incorrect{
+    background: red;
+}
