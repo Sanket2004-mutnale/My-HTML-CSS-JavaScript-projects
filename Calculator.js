@@ -1,33 +1,111 @@
-function getInputs() {
-    const input1 = parseFloat(document.getElementById('input1').value);
-    const input2 = parseFloat(document.getElementById('input2').value);
-    return { input1, input2 };
+const calculator = {
+    displayValue: '0',
+    firstOperand: null,
+    waitingForSecondOperand: false,
+    operator: null,
+};
+
+function updateDisplay() {
+    const display = document.querySelector('.calculator-screen');
+    display.value = calculator.displayValue;
 }
 
-function Addition() {
-    const { input1, input2 } = getInputs();
-    const result = input1 + input2;
-    document.getElementById('Ans').innerText ="Result:-"+result;
-}
+function handleNumber(number) {
+    const { displayValue, waitingForSecondOperand } = calculator;
 
-function Subtraction() {
-    const { input1, input2 } = getInputs();
-    const result = input1 - input2;
-    document.getElementById('Ans').innerText = "Result:-"+result;
-}
-
-function Multiplication() {
-    const { input1, input2 } = getInputs();
-    const result = input1 * input2;
-    document.getElementById('Ans').innerText = "Result:-"+result;
-}
-
-function Division() {
-    const { input1, input2 } = getInputs();
-    if (input2 === 0) {
-        document.getElementById('Ans').innerText = 'Error: Division by zero';
+    if (waitingForSecondOperand === true) {
+        calculator.displayValue = number;
+        calculator.waitingForSecondOperand = false;
     } else {
-        const result = input1 / input2;
-        document.getElementById('Ans').innerText = "Result:-"+result;
+        calculator.displayValue = displayValue === '0' ? number : displayValue + number;
     }
 }
+
+function handleOperator(nextOperator) {
+    const { firstOperand, displayValue, operator } = calculator;
+    const inputValue = parseFloat(displayValue);
+
+    if (operator && calculator.waitingForSecondOperand) {
+        calculator.operator = nextOperator;
+        return;
+    }
+
+    if (firstOperand == null && !isNaN(inputValue)) {
+        calculator.firstOperand = inputValue;
+    } else if (operator) {
+        const result = calculate(firstOperand, inputValue, operator);
+
+        calculator.displayValue = `${parseFloat(result.toFixed(7))}`;
+        calculator.firstOperand = result;
+    }
+
+    calculator.waitingForSecondOperand = true;
+    calculator.operator = nextOperator;
+}
+
+function calculate(firstOperand, secondOperand, operator) {
+    if (operator === '+') {
+        return firstOperand + secondOperand;
+    } else if (operator === '-') {
+        return firstOperand - secondOperand;
+    } else if (operator === '*') {
+        return firstOperand * secondOperand;
+    } else if (operator === '/') {
+        return firstOperand / secondOperand;
+    }
+
+    return secondOperand;
+}
+
+function handleDecimal(dot) {
+    if (calculator.waitingForSecondOperand) {
+        calculator.displayValue = '0.';
+        calculator.waitingForSecondOperand = false;
+        return;
+    }
+
+    if (!calculator.displayValue.includes(dot)) {
+        calculator.displayValue += dot;
+    }
+}
+
+function resetCalculator() {
+    calculator.displayValue = '0';
+    calculator.firstOperand = null;
+    calculator.waitingForSecondOperand = false;
+    calculator.operator = null;
+}
+
+const keys = document.querySelector('.calculator-keys');
+keys.addEventListener('click', (event) => {
+    const { target } = event;
+    const { value } = target;
+
+    if (!target.matches('button')) {
+        return;
+    }
+
+    switch (value) {
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '=':
+            handleOperator(value);
+            break;
+        case '.':
+            handleDecimal(value);
+            break;
+        case 'all-clear':
+            resetCalculator();
+            break;
+        default:
+            if (Number.isInteger(parseFloat(value))) {
+                handleNumber(value);
+            }
+    }
+
+    updateDisplay();
+});
+
+updateDisplay();
